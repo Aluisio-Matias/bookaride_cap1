@@ -1,0 +1,40 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+<h1 class="display-3 my-3 text-center">Register</h1>
+<p class="h3 text-center my-3">Create a new account!</p>
+
+<form method="POST" class="row g-3">
+
+
+    {{ form.hidden_tag() }}
+
+
+    <div class="col-md-6">
+        {{ form.username.label }} {{ form.username(class_="form-control") }}
+        <span id="checkUser"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.password.label }} {{ form.password(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.first_name.label }} {{ form.first_name(class_="form-control")}}
+    </div>
+    <div class="col-md-6">
+        {{ form.last_name.label }} {{ form.last_name(class_="form-control")}}
+    </div>
+    <div class="col-md-6">
+        {{ form.email.label }} {{ form.email(class_="form-control")}}
+        <span id="checkEmail"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.phone.label }} {{ form.phone(class_="form-control")}}
+        <span id="phoneCheck"></span>
+    </div>
+
+    <button class="btn btn-outline-primary my-4" type="submit">Register</button>
+
+</form>
+
+{% endblock %}

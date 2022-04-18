@@ -1,0 +1,19 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+<h1 class="display-5 my-3">Email your confirmation.</h1>
+
+<form method="POST" class="row g-3">
+    {{ form.hidden_tag() }}
+
+    <div class="col-md-6">
+        {{ form.email_res.label }} {{ form.email_res(class_="form-control") }}
+    </div>
+    <div class="d-grid d-md-flex justify-content-md-start">
+    <button class="btn btn-outline-success" type="submit">Send</button>
+        </div>
+</form>
+
+
+{% endblock %}

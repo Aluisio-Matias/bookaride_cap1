@@ -1,0 +1,78 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+<h1 class="display-5">Make a reservation</h1>
+
+<form method="POST" class="row g-3">
+
+    {{ form.hidden_tag() }}
+
+    <div class="col-12">
+        {{ form.passenger_name.label }} {{ form.passenger_name(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.passenger_phone.label }} {{ form.passenger_phone(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.passenger_email.label }} {{ form.passenger_email(class_="form-control") }}
+    </div>
+    <hr>
+    <div class="col-md-6">
+        {{form.vehicle_type.label}} {{form.vehicle_type(class_="form-select")}}
+    </div>
+    <hr>
+    <div class="col-md-6">
+        {{ form.PU_date.label }} {{ form.PU_date(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.PU_time.label }} {{ form.PU_time(class_="form-control") }}
+    </div>
+    <div class="col-12">
+        {{ form.PU_address.label }} {{ form.PU_address(class_="form-control", placeholder="Search your address") }}
+    </div>
+    <div class="col-12">
+        {{ form.PU_address_2.label }} {{ form.PU_address_2(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.PU_city.label }} {{ form.PU_city(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.PU_state.label }} {{ form.PU_state(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.PU_zip.label }} {{ form.PU_zip(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.PU_country.label }} {{ form.PU_country(class_="form-control") }}
+    </div>
+    <hr>
+    <div class="col-12">
+        {{ form.DO_address.label }} {{ form.DO_address(class_="form-control", placeholder="Search your address") }}
+    </div>
+    <div class="col-12">
+        {{ form.DO_address_2.label }} {{ form.DO_address_2(class_="form-control") }}
+    </div>
+    <div class="col-md-6">
+        {{ form.DO_city.label }} {{ form.DO_city(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.DO_state.label }} {{ form.DO_state(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.DO_zip.label }} {{ form.DO_zip(class_="form-control") }}
+    </div>
+    <div class="col-md-2">
+        {{ form.DO_country.label }} {{ form.DO_country(class_="form-control") }}
+    </div>
+    <div class="col-md-12">
+        {{ form.notes.label }} {{ form.notes(class_="form-control") }}
+    </div>
+
+    
+    <button class="btn btn-outline-primary my-4" type="submit">Submit</button>
+    
+
+</form>
+
+{% endblock %}
