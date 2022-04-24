@@ -6,7 +6,7 @@ $('#flashMsg').on('click', '.delete-button', async function (evt) {
 })
 
 
-// check if username already existis in the database
+// check if username already existis in the users database
 $('#username').on('focusout', function () {
     $.getJSON("/check/" + $("#username").val(), (data) => {
 
@@ -19,6 +19,7 @@ $('#username').on('focusout', function () {
     })
 });
 
+// check if phone number already existis in the users database
 $('#phone').on('focusout', function () {
     $.getJSON("/verify/" + $("#phone").val(), (data) => {
 
@@ -31,6 +32,7 @@ $('#phone').on('focusout', function () {
     })
 });
 
+// check if email already existis in the users database
 $('#email').on('focusout', function () {
     $.getJSON("/lookup/" + $("#email").val(), (data) => {
 
@@ -39,6 +41,32 @@ $('#email').on('focusout', function () {
 
         } else {
             $("#checkEmail").html("<i style='color:#d9534f;' class='fa-solid fa-triangle-exclamation fa-xl'></i><span class='badge rounded-pill bg-danger'>This E-mail belongs to another user.</span>");
+        }
+    })
+});
+
+// check if username already existis in the admin database
+$('#admin_username').on('focusout', function () {
+    $.getJSON("/check_admin/" + $("#admin_username").val(), (data) => {
+
+        if (data['exists'] === true) {
+            $("#adminUser").html("<i style='color:#4bbf73;' class='fa-solid fa-check fa-xl'></i><span class='badge rounded-pill bg-success'>This username is available!</span>");
+
+        } else {
+            $("#adminUser").html("<i style='color:#d9534f;' class='fa-solid fa-triangle-exclamation fa-xl'></i><span class='badge rounded-pill bg-danger'>This username is not available!</span>");
+        }
+    })
+});
+
+// check if email already existis in the users database
+$('#admin_email').on('focusout', function () {
+    $.getJSON("/verify_admin/" + $("#admin_email").val(), (data) => {
+
+        if (data['exists'] === true) {
+            $("#adminEmail").html("<i style='color:#4bbf73;' class='fa-solid fa-check fa-xl'></i>");
+
+        } else {
+            $("#adminEmail").html("<i style='color:#d9534f;' class='fa-solid fa-triangle-exclamation fa-xl'></i><span class='badge rounded-pill bg-danger'>This E-mail belongs to another user.</span>");
         }
     })
 });
@@ -54,13 +82,12 @@ window.onload = function () {
             'poi',
             'airport',
             'address',
-            'adminArea',
         ]
 
     });
 
     ps.on('change', (e) => {
-        document.querySelector('#PU_address').value = e.result.name || '';
+        document.querySelector('#PU_street').value = e.result.name || '';
         document.querySelector('#PU_city').value = e.result.city || '';
         document.querySelector('#PU_state').value = e.result.stateCode || '';
         document.querySelector('#PU_zip').value = e.result.postalCode || '';
@@ -68,7 +95,7 @@ window.onload = function () {
     });
 
     ps.on('clear', () => {
-        document.querySelector('#PU_address').value = '';
+        document.querySelector('#PU_street').value = '';
         document.querySelector('#PU_city').value = '';
         document.querySelector('#PU_state').value = '';
         document.querySelector('#PU_zip').value = '';
@@ -83,7 +110,7 @@ window.onload = function () {
 
 
 // window.onload = function () {
-//     let ps = placeSearch({
+//     let ps = searchPlace({
 //         key: 'G5F1eAqrAxpAwSEY5OtKnh07BpS99ryw',
 //         container: document.querySelector('#DO_address'),
 //         useDeviceLocation: true,
@@ -96,7 +123,7 @@ window.onload = function () {
 //     });
 
 //     ps.on('change', (e) => {
-//         document.querySelector('#DO_address').value = e.result.name || '';
+//         document.querySelector('#DO_street').value = e.result.name || '';
 //         document.querySelector('#DO_city').value = e.result.city || '';
 //         document.querySelector('#DO_state').value = e.result.stateCode || '';
 //         document.querySelector('#DO_zip').value = e.result.postalCode || '';
@@ -104,7 +131,7 @@ window.onload = function () {
 //     });
 
 //     ps.on('clear', () => {
-//         document.querySelector('#DO_address').value = '';
+//         document.querySelector('#DO_street').value = '';
 //         document.querySelector('#DO_city').value = '';
 //         document.querySelector('#DO_state').value = '';
 //         document.querySelector('#DO_zip').value = '';
@@ -116,6 +143,3 @@ window.onload = function () {
 //     });
 
 // };
-
-
-/////////////// handle the popup functions to the booking confirmation //////////

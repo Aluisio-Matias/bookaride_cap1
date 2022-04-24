@@ -14,7 +14,7 @@
         crossorigin="anonymous" />
 </head>
 <body>
-  <a class="btn btn-secondary mt-2" href="/users/{{user.id}}">Go Back</a>
+  <a class="btn btn-secondary" href="/users/{{user.id}}">Go Back</a>
   <div class="container">
     <h3 class="text-center my-5">Booking Confirmation</h1>
     <div class="container px-4">
@@ -75,23 +75,22 @@
         <div class="col-7 border bg-light">{{res_id.PU_address}}</div>
       </div>
 
-      <!-- consider adding stops in between here!!!!!!!!! -->
-
       <div class="row g-2">
         <div class="col-2 p-2 border bg-light">Drop-Off:</div>
         <div class="col-3 border bg-light text-center"></div>
-        <div class="col-7 border bg-light">{{res_id.DO_address}} {{res_id.DO_city}} {{res_id.DO_state}} {{res_id.DO_zip}}</div>
+        <div class="col-7 border bg-light">{{res_id.DO_address}}</div>
       </div>
+      <hr>
       <div class="row g-0">
-        <div class="border bg-dark bg-opacity-25 fw-bold text-center my-2">Trip notes</div>
-        <div class="row g-12">{{res_id.notes}}</div>
+        <div class="border bg-dark bg-opacity-25 fw-bold text-center my-2">Trip Notes</div>
+        <div class="row g-12">{{res_id.trip_notes}}</div>
       </div>
       <hr>
          
-      <!-- Add amount and anything else needed here -->
       
           {% endif %}
+          
   </div>
-  
+
 </body>
 </html>

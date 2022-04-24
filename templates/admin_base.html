@@ -28,34 +28,28 @@
             </a>
             <ul class="nav navbar-nav navbar-right mx-5">
 
-                {% if not g.user %}
+                {% if not admin %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-expanded="false">Login</a>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Login</a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/login">User Login</a>
-                        </li>
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/admin/admin_login">Admin
-                                Login</a></li>
+                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/login">User Login</a></li>
+                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/admin/admin_login">Admin Login</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-expanded="false">Register</a>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Register</a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/register">Register
-                                User</a></li>
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;"
-                                href="/admin/register_admin">Register Admin</a></li>
+                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/register">Register User</a></li>
+                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/admin/register_admin">Register Admin</a></li>
                     </ul>
                 </li>
                 {% else %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/users/{{g.user.id}}">Dashboard</a>
+                    <a class="nav-link" href="/admin/admin_home/{{admin.id}}">Dispatch View</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
+                    <a class="nav-link" href="/admin/admin_login">Logout</a>
                 </li>
 
                 {% endif %}

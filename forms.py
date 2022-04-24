@@ -49,6 +49,19 @@ class LoginForm(FlaskForm):
         validators=[Length(min=6)],
         )
 
+class AdminLoginForm(FlaskForm):
+    '''Form for login a user.'''
+
+    admin_username = StringField(
+        'Username', 
+        validators=[DataRequired()],
+        )
+
+    password = PasswordField(
+        'Password', 
+        validators=[Length(min=6)],
+        )
+
     
 class UserEditForm(FlaskForm):
     '''Form for updating user's profile.'''
@@ -119,16 +132,17 @@ class ResForm(FlaskForm):
     )
 
     PU_address = StringField(
-        'Pick-Up Address',
+        'Search for your pick-Up address',
+    )
+
+    PU_street = StringField(
+        'Street Address',
         validators=[InputRequired()],
     )
 
-    PU_address_2 = StringField(
-        'Address 2'
-    )
-
     PU_city = StringField(
-        'City'
+        'City',
+        validators=[InputRequired()],
     )
 
     PU_state = StringField(
@@ -145,16 +159,17 @@ class ResForm(FlaskForm):
     )
 
     DO_address = StringField(
-        'Drop-off Address',
+        'Search for your drop-off address',
+    )
+
+    DO_street = StringField(
+        'Street Address',
         validators=[InputRequired()],
     )
 
-    DO_address_2 = StringField(
-        'Address 2'
-    )
-
     DO_city = StringField(
-        'City'
+        'City',
+        validators=[InputRequired()],
     )
 
     DO_state = StringField(
@@ -170,8 +185,8 @@ class ResForm(FlaskForm):
         'Country'
     )
 
-    notes = TextAreaField(
-        'Reservation Notes',
+    trip_notes = TextAreaField(
+        'Trip Notes',
     )
 
 
@@ -182,3 +197,44 @@ class EmailRes(FlaskForm):
         'Enter your email',
         validators=[InputRequired()],
     )
+
+
+class AdminForm(FlaskForm):
+    '''Form to add/edit an Administrator'''
+
+    admin_username = StringField(
+        'Username', 
+        validators=[InputRequired(), Length(min=4, max=25)],
+        )
+
+    password = PasswordField(
+        'Password', 
+        validators=[Length(min=8)],
+        )
+
+    admin_email = EmailField(
+        'E-mail', 
+        validators=[InputRequired()],
+        )
+
+    company_name = StringField(
+        'Company Name',
+    )
+
+    company_phone = TelField(
+        "Phone Number",
+    )
+
+    company_email = EmailField(
+        'Company E-mail',
+    )
+
+    company_website = StringField(
+        'Website',
+    )
+
+    logo_url = StringField(
+        'Logo URL',
+    )
+
+

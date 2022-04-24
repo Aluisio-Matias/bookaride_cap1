@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmation</title>
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 3%;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .my-2 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .my-5 {
+      margin-top: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .px-4 {
+      padding-right: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .col {
+      -ms-flex: 1 0 0%;
+      flex: 1 0 0%;
+    }
+
+    .p-3 {
+      padding: 1rem;
+    }
+
+    .fw-bold {
+      font-weight: 700;
+    }
+
+    .text-start {
+      text-align: left;
+    }
+
+    .text-end {
+      text-align: right;
+    }
+
+    table{
+      width: 100%;
+      padding: 10px;
+      
+    }
+
+    td, th{
+      width: auto; 
+      padding: 10px;
+    }
+
+    .border {
+      border: solid rgb(224, 224, 224);
+    }
+
+    .bg-light {
+      background-color: rgb(224, 224, 224);
+    }
+
+    hr{
+      border: solid thin rgb(224, 224, 224);
+    }
+
+  </style>
+</head>
+
+<body>
+    <h3 class="text-center my-5">Booking Confirmation</h1>
+      <div class="px-4">
+          <div class="col">
+            <div class="p-3">
+              <img src="" alt="Company Logo">
+              <h6 class="fw-bold text-start">Company info</h6>
+            </div>
+          </div>
+            <div class="text-end p-3">
+              <p class="text-end">Customer:{first_name} {last_name}</p>
+              <p class="text-end">Phone:{phone}</p>
+            </div>
+        
+      </div>
+
+      <hr>
+
+      <table>
+        <thead class="bg-light">
+          <tr>
+            <th>Conf. #</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Passenger</th>
+            <th>Passenger Cell#</th>
+            <th>Vehicle Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{conf}</td>
+            <td>{PU_date}</td>
+            <td>{PU_time}</td>
+            <td>{passenger_name}</td>
+            <td>{passenger_phone}</td>
+            <td>{vehicle_type} </td>
+          </tr>
+
+        </tbody>
+      </table>
+      <div class="border bg-light fw-bold text-center my-2">Service Details</div>
+      
+      <table>
+        <tr>
+          <td>Pick-Up:</td>
+          <td>{PU_date} - {PU_time}</td>
+          <td>{PU_address}</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Drop-Off:</td>
+          <td></td>
+          <td>{DO_address}</td>
+        </tr>
+      </table>
+      <hr>
+        <div class="border bg-light fw-bold text-center my-2">Trip Notes</div>
+        <p class="my-2">{trip_notes}</p>
+      <hr>
+</body>
+</html>

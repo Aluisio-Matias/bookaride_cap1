@@ -1,8 +1,8 @@
-{% extends 'base.html'%}
+{% extends 'admin_base.html' %}
 
 {% block content %}
 
-<h1 class="display-5 text-center my-4">Create a reservation</h1>
+<h1 class="display-5 my-3 text-center">Edit reservation (#{{res_id.id}})</h1>
 
 <form method="POST" class="row g-3">
 
@@ -70,9 +70,8 @@
     </div>
 
     
-    <button class="btn btn-outline-primary my-4" type="submit">Submit</button>
+    <button class="btn btn-outline-success my-4" type="submit">Save</button>
     
-
 </form>
 
 {% endblock %}

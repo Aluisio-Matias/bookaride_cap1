@@ -1,7 +1,5 @@
-
 from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
-from psycopg2 import Timestamp
 from flask_bcrypt import Bcrypt
 from sqlalchemy.schema import Sequence
 from datetime import datetime, timezone
@@ -19,19 +17,6 @@ class User(db.Model):
         primary_key=True,
         autoincrement=True,
     )
-
-    # passenger_id = db.Column(
-    #     db.Integer,
-    #     db.ForeignKey('passengers.id', ondelete='cascade'),
-    #     primary_key=True,
-    # )
-
-    # username = db.Column(
-    #     db.String(30),
-    #     primary_key=True,
-    #     nullable=False,
-    #     unique=True,
-    # )
 
     username = db.Column(
         db.String,
@@ -111,7 +96,7 @@ class User(db.Model):
 
 
 class Reservation(db.Model):
-    '''Created reservations.'''
+    '''Database for all reservations.'''
 
     __tablename__ = 'reservations'
 
@@ -121,12 +106,6 @@ class Reservation(db.Model):
         Sequence('res_seq', start=10001, increment=1),
         primary_key=True,
     )
-
-    # passenger_id = db.Column(
-    #     db.Integer,
-    #     db.ForeignKey('passengers.id', ondelete='cascade'),
-    #     primary_key=True,
-    # )
 
     # driver_id = db.Column(
     #     db.Integer,
@@ -168,7 +147,7 @@ class Reservation(db.Model):
         nullable=False,
     )
 
-    PU_address_2 = db.Column(
+    PU_street = db.Column(
         db.String
     )
 
@@ -193,7 +172,7 @@ class Reservation(db.Model):
         nullable=False,
     )
 
-    DO_address_2 = db.Column(
+    DO_street = db.Column(
         db.String
     )
 
@@ -213,7 +192,7 @@ class Reservation(db.Model):
         db.String
     )
 
-    notes = db.Column(
+    trip_notes = db.Column(
         db.Text,
     )
 
@@ -231,60 +210,82 @@ class Reservation(db.Model):
     user = db.relationship(User,  backref=db.backref("reservations", cascade="all, delete-orphan"))
 
 
+class Admin(db.Model):
+    '''System admnistrator'''
 
-# class Passenger(db.Model):
-#     '''Passenger '''
+    __tablename__ = "admin"
 
-#     __tablename__ = 'passengers'
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
 
-#     id = db.Column(
-#         db.Integer, 
-#         primary_key=True,
-#     )
+    admin_username = db.Column(
+        db.String,
+        nullable=False,
+        unique=True,
+    )
 
-#     first_name = db.Column(
-#         db.Text,
-#         nullable=False,
-#     )
+    password = db.Column(
+        db.Text,
+        nullable=False,
+    )
 
-#     last_name = db.Column(
-#         db.Text,
-#         nullable=False,
-#     )
+    admin_email = db.Column(
+        db.String,
+        nullable=False,
+        unique=True,
+    )
 
-#     phone = db.Column(
-#         db.Integer,
-#         nullable=False,
-#     )
+    company_name = db.Column(
+        db.String,
+    )
 
-#     email = db.Column(
-#         db.Text,
-#     )
+    company_phone = db.Column(
+        db.String,
+    )
 
-#     address = db.Column(
-#         db.Text,
-#     )
+    company_email = db.Column(
+        db.String,
+    )
 
-#     city = db.Column(
-#         db.Text,
-#     )
+    company_website = db.Column(
+        db.String,
+    )
 
-#     state = db.Column(
-#         db.Text,
-#     )
+    logo_url = db.Column(
+        db.Text,
+        # default="/static/images/",
+    )
 
-#     zipcode = db.Column(
-#         db.Integer,
-#     )
+    @classmethod
+    def register_admin(cls, admin_username, password, admin_email):
+        '''Register an administrator
+        Hashes password and adds the admin to the system'''
 
-#     country = db.Column(
-#         db.Text,
-#     )
+        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
+        admin = cls(
+            admin_username=admin_username,
+            password=hashed_pwd,
+            admin_email=admin_email,
+        )
 
+        db.session.add(admin)
+        return admin
 
+    @classmethod 
+    def authenticate_admin(cls, admin_username, password):
+        '''Finds a user with a matching username and password, 
+        if it doesn't find it or password is wrong, returns False.'''
 
+        admin = Admin.query.filter_by(admin_username=admin_username).first()
 
+        if admin and bcrypt.check_password_hash(admin.password, password):
+            return admin
+        else:
+            return False
 
 
 # class Driver(db.Model):

@@ -1,0 +1,27 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+
+<h1 class="display-3 my-3 text-center">Register your Administrator account</h1>
+
+<form method="POST" class="row g-3">
+
+    {{ form.hidden_tag() }}
+
+    <div class="col-md-6">
+        {{ form.admin_email.label }} {{ form.admin_email(class_="form-control")}}
+        <span id="adminEmail"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.admin_username.label }} {{ form.admin_username(class_="form-control") }}
+        <span id="adminUser"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.password.label }} {{ form.password(class_="form-control") }}
+    </div>
+
+    <button class="btn btn-outline-primary my-4" type="submit">Register</button>
+
+</form>
+
+{% endblock %}
