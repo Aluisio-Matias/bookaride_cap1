@@ -15,7 +15,10 @@
         integrity="sha384-eLT4eRYPHTmTsFGFAzjcCWX+wHfUInVWNm9YnwpiatljsZOwXtwV2Hh6sHM6zZD9" crossorigin="anonymous" />
     <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
     <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tinos&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
@@ -23,39 +26,51 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <span style="font-size: 1.1em; color: white;">
-                    <i class="fa-solid fa-compass fa-spin"></i>
+                    <i class="fa-solid fa-gear fa-spin"></i>
                 </span>
+                BOOKARIDE
             </a>
             <ul class="nav navbar-nav navbar-right mx-5">
 
-                {% if not g.user %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-expanded="false">Login</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/login">User Login</a>
-                        </li>
-                        <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/admin/admin_login">Admin
-                                Login</a></li>
-                    </ul>
+                {% if "curr_user" in session %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/{{ session['curr_user'] }}"><b>Dashboard</b></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><b>Logout</b></a>
+                </li>
+                
+
+                {% elif "curr_admin" in session %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/admin_home"><b>Dispatch View</b></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><b>Logout</b></a>
+                </li>
+                
+                {% else %}
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/about" role="button"><b>About Us</b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login" role="button"><b>Login</b></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-expanded="false">Register</a>
+                        aria-expanded="false"><b>Register</b></a>
                     <ul class="dropdown-menu">
                         <li><a class="nav-link" style="font-size: 1.1em; color: black;" href="/register">Register
                                 User</a></li>
                         <li><a class="nav-link" style="font-size: 1.1em; color: black;"
                                 href="/admin/register_admin">Register Admin</a></li>
                     </ul>
-                </li>
-                {% else %}
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/users/{{g.user.id}}">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
                 </li>
 
                 {% endif %}

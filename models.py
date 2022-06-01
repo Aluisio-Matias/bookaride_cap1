@@ -1,13 +1,14 @@
-from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy.schema import Sequence
 from datetime import datetime, timezone
+from flask_login import UserMixin
+# from flask_security import UserMixin, RoleMixin
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     '''User in the system'''
 
     __tablename__ = 'users'
@@ -53,15 +54,22 @@ class User(db.Model):
 
     is_admin = db.Column(
         db.Boolean, 
-        nullable=False,
         default=False,
     )
 
+    # active = db.Column(db.Boolean)
+
     member_since = db.Column(
         db.DateTime,
-        nullable=False,
+        # nullable=False,
         default=datetime.now(timezone.utc),
     )
+
+    # roles = db.relationship(
+    #     'Role', 
+    #     secondary='user_roles', 
+    #     backref=db.backref('users', lazy='dynamic')
+    #     )
 
     @classmethod
     def register(cls, username, password, email, first_name, last_name, phone):
@@ -93,6 +101,28 @@ class User(db.Model):
             return user
         else:
             return False
+
+    @classmethod
+    def registerAdmin(cls, username, password, email, first_name, last_name, phone, is_admin):
+        '''Register a user 
+        Hashes password and add user to the system'''
+
+        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
+
+        admin = cls(
+            username=username,
+            password=hashed_pwd,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            is_admin=is_admin,
+        )
+
+        db.session.add(admin)
+        return admin
+
+
 
 
 class Reservation(db.Model):
@@ -208,84 +238,6 @@ class Reservation(db.Model):
                         )
 
     user = db.relationship(User,  backref=db.backref("reservations", cascade="all, delete-orphan"))
-
-
-class Admin(db.Model):
-    '''System admnistrator'''
-
-    __tablename__ = "admin"
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-        autoincrement=True,
-    )
-
-    admin_username = db.Column(
-        db.String,
-        nullable=False,
-        unique=True,
-    )
-
-    password = db.Column(
-        db.Text,
-        nullable=False,
-    )
-
-    admin_email = db.Column(
-        db.String,
-        nullable=False,
-        unique=True,
-    )
-
-    company_name = db.Column(
-        db.String,
-    )
-
-    company_phone = db.Column(
-        db.String,
-    )
-
-    company_email = db.Column(
-        db.String,
-    )
-
-    company_website = db.Column(
-        db.String,
-    )
-
-    logo_url = db.Column(
-        db.Text,
-        # default="/static/images/",
-    )
-
-    @classmethod
-    def register_admin(cls, admin_username, password, admin_email):
-        '''Register an administrator
-        Hashes password and adds the admin to the system'''
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        admin = cls(
-            admin_username=admin_username,
-            password=hashed_pwd,
-            admin_email=admin_email,
-        )
-
-        db.session.add(admin)
-        return admin
-
-    @classmethod 
-    def authenticate_admin(cls, admin_username, password):
-        '''Finds a user with a matching username and password, 
-        if it doesn't find it or password is wrong, returns False.'''
-
-        admin = Admin.query.filter_by(admin_username=admin_username).first()
-
-        if admin and bcrypt.check_password_hash(admin.password, password):
-            return admin
-        else:
-            return False
 
 
 # class Driver(db.Model):

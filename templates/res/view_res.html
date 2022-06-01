@@ -14,24 +14,31 @@
         crossorigin="anonymous" />
 </head>
 <body>
-  <a class="btn btn-secondary" href="/users/{{user.id}}">Go Back</a>
+  {% if 'curr_admin' in session %}
+  <a class="btn btn-secondary" href="/admin/admin_home">Go Back</a>
+  {% elif 'curr_user' in session %}
+  <a class="btn btn-secondary" href="/users/{{res.user.id}}">Go Back</a>
+  {% endif %}
   <div class="container">
     <h3 class="text-center my-5">Booking Confirmation</h1>
     <div class="container px-4">
         <div class="row gx-5 my-5">
           <div class="col">
            <div class="p-3">
-               <img src="" alt="Company Logo">
-               <h6 class="fw-bold text-start">Company info</h6>
+               <img src="/static/images/logo.png" alt="Company Logo">
+               <h6 class="fw-bold text-start">COMPANY NAME</h6>
+               <i class="fa-solid fa-building"> 123 Main Street, YourCity, State, 12345</i><br>
+               <i class="fa-solid fa-phone"> 012-345-6789</i><br>
+               <i class="fa-solid fa-envelope"> example@email.com</i>
            </div>
           </div>
           <div class="col">
             <div class="p-3">
               
-              {% if user %}
-           <p class="fs-5 text-end">Customer: {{user.first_name}} {{user.last_name}}</p>
-           <p class="fs-5 text-end">Phone: {{user.phone}}</p>
-                {% endif %}
+      
+           <p class="fs-5 text-end">Customer: {{res.user.first_name}} {{res.user.last_name}}</p>
+           <p class="fs-5 text-end">Phone: {{res.user.phone}}</p>
+                
                 
             </div>
           </div>
@@ -51,16 +58,16 @@
               <th scope="col">Vehicle Type</th>
             </tr>
           </thead>
-          {% if res_id %}
+         
            
           <tbody>
             <tr>
-                <td>{{res_id.id}}</td>
-                <td>{{res_id.PU_date.strftime('%A, %B %d, %Y')}}</td>
-                <td>{{res_id.PU_time.strftime('%I:%M %p')}}</td>
-                <td>{{res_id.passenger_name}}</td>
-                <td>{{res_id.passenger_phone}}</td>
-                <td>{{res_id.vehicle_type}} </td>
+                <td>{{res.id}}</td>
+                <td>{{res.PU_date.strftime('%A, %B %d, %Y')}}</td>
+                <td>{{res.PU_time.strftime('%I:%M %p')}}</td>
+                <td>{{res.passenger_name}}</td>
+                <td>{{res.passenger_phone}}</td>
+                <td>{{res.vehicle_type}} </td>
               </tr>
 
           </tbody>
@@ -71,24 +78,23 @@
       </div>
       <div class="row g-2">
         <div class="col-2 p-2 border bg-light">Pick-Up:</div>
-        <div class="col-3 border bg-light text-center">{{res_id.PU_date.strftime('%m/%d/%Y')}} - {{res_id.PU_time.strftime('%I:%M %p')}}</div>
-        <div class="col-7 border bg-light">{{res_id.PU_address}}</div>
+        <div class="col-3 border bg-light text-center">{{res.PU_date.strftime('%m/%d/%Y')}} - {{res.PU_time.strftime('%I:%M %p')}}</div>
+        <div class="col-7 border bg-light">{{res.PU_address}}</div>
       </div>
 
       <div class="row g-2">
         <div class="col-2 p-2 border bg-light">Drop-Off:</div>
         <div class="col-3 border bg-light text-center"></div>
-        <div class="col-7 border bg-light">{{res_id.DO_address}}</div>
+        <div class="col-7 border bg-light">{{res.DO_address}}</div>
       </div>
       <hr>
       <div class="row g-0">
         <div class="border bg-dark bg-opacity-25 fw-bold text-center my-2">Trip Notes</div>
-        <div class="row g-12">{{res_id.trip_notes}}</div>
+        <div class="row g-12">{{res.trip_notes}}</div>
       </div>
       <hr>
          
-      
-          {% endif %}
+  
           
   </div>
 

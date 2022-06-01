@@ -9,16 +9,31 @@
     {{ form.hidden_tag() }}
 
     <div class="col-md-6">
-        {{ form.admin_email.label }} {{ form.admin_email(class_="form-control")}}
-        <span id="adminEmail"></span>
-    </div>
-    <div class="col-md-6">
-        {{ form.admin_username.label }} {{ form.admin_username(class_="form-control") }}
-        <span id="adminUser"></span>
+        {{ form.username.label }} {{ form.username(class_="form-control") }}
+        <span id="checkUser"></span>
     </div>
     <div class="col-md-6">
         {{ form.password.label }} {{ form.password(class_="form-control") }}
     </div>
+    <div class="col-md-6">
+        {{ form.first_name.label }} {{ form.first_name(class_="form-control")}}
+    </div>
+    <div class="col-md-6">
+        {{ form.last_name.label }} {{ form.last_name(class_="form-control")}}
+    </div>
+    <div class="col-md-6">
+        {{ form.email.label }} {{ form.email(class_="form-control")}}
+        <span id="checkEmail"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.phone.label }} {{ form.phone(class_="form-control")}}
+        <span id="phoneCheck"></span>
+    </div>
+    <div class="col-md-6">
+        {{ form.is_admin.label }} {{ form.is_admin(class_="form-control")}}
+        <span id="phoneCheck"></span>
+    </div>
+
 
     <button class="btn btn-outline-primary my-4" type="submit">Register</button>
 

@@ -1,0 +1,32 @@
+body{
+    width: 100%;
+    height: auto;
+    background-color: #f1f1f1;
+    font-family: 'Tinos', serif;
+}
+
+#welcome{
+    color: #f1f1f1;
+}
+
+.content-warpper{
+    width: 100%;
+    margin: 0;
+}
+
+.content-warpper img{
+    width: 100%;
+    margin: 0;
+}
+
+.text-wrapper{
+    width: 100%;
+    position: relative;
+    margin-top: -50%;
+}
+
+.text-wrapper h1{
+    text-align: start;
+    color: #f1f1f1;
+}
+

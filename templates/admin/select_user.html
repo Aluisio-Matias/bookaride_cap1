@@ -1,0 +1,18 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<h1 class="display-5">Select Customer</h1>
+{% for user in users %}
+    {% if user.is_admin == False %}
+    <div class="list-group">
+        <a class="btn-primary list-group-item fw-bold" href="/admin/new_res/{{user.id}}">
+            Username: {{user.username}} - Customer Name: {{user.first_name}} {{user.last_name}} -
+            Phone Number: {{user.phone}} - Email: {{user.email}} - 
+            Member Since: {{user.member_since.strftime('%m/%d/%Y')}}
+        </a></li>
+    </div>
+    {% endif %}
+    
+{% endfor %}
+
+{% endblock %}

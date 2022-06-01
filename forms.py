@@ -1,6 +1,8 @@
+from random import choices
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, TelField, TimeField, TextAreaField, DateField, SelectField, FormField
+from wtforms import StringField, PasswordField, EmailField, TelField, TimeField, TextAreaField, DateField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length, InputRequired
+from models import User
 
 class RegisterForm(FlaskForm):
     '''Form for registering new users.'''
@@ -36,23 +38,49 @@ class RegisterForm(FlaskForm):
         )
 
 
-class LoginForm(FlaskForm):
-    '''Form for login a user.'''
+class AdminRegisterForm(FlaskForm):
+    '''Form for registering new users.'''
 
     username = StringField(
         'Username', 
-        validators=[DataRequired()],
+        validators=[InputRequired(), Length(min=4, max=25)],
         )
 
     password = PasswordField(
         'Password', 
-        validators=[Length(min=6)],
+        validators=[Length(min=8)],
         )
 
-class AdminLoginForm(FlaskForm):
+    email = EmailField(
+        'E-mail', 
+        validators=[InputRequired()],
+        )
+
+    first_name = StringField(
+        'First Name', 
+        validators=[InputRequired(), Length(max=30)],
+        )
+
+    last_name = StringField(
+        'Last Name', 
+        validators=[InputRequired(), Length(max=30)],
+        )
+
+    phone = TelField(
+        'Phone Number', 
+        validators=[InputRequired()],
+        )
+
+    is_admin = BooleanField(
+        'Is admin',
+        default="checked",
+    )
+
+
+class LoginForm(FlaskForm):
     '''Form for login a user.'''
 
-    admin_username = StringField(
+    username = StringField(
         'Username', 
         validators=[DataRequired()],
         )
@@ -196,45 +224,6 @@ class EmailRes(FlaskForm):
     email_res = EmailField(
         'Enter your email',
         validators=[InputRequired()],
-    )
-
-
-class AdminForm(FlaskForm):
-    '''Form to add/edit an Administrator'''
-
-    admin_username = StringField(
-        'Username', 
-        validators=[InputRequired(), Length(min=4, max=25)],
-        )
-
-    password = PasswordField(
-        'Password', 
-        validators=[Length(min=8)],
-        )
-
-    admin_email = EmailField(
-        'E-mail', 
-        validators=[InputRequired()],
-        )
-
-    company_name = StringField(
-        'Company Name',
-    )
-
-    company_phone = TelField(
-        "Phone Number",
-    )
-
-    company_email = EmailField(
-        'Company E-mail',
-    )
-
-    company_website = StringField(
-        'Website',
-    )
-
-    logo_url = StringField(
-        'Logo URL',
     )
 
 

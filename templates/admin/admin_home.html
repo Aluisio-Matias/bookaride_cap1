@@ -1,15 +1,19 @@
-{% extends 'admin_base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
-<h1 class="display-5 text-center my-3">{{admin.admin_username}}, welcome to your dispatch view.</h1>
+<div class="card bg-dark text-white">
+    <img src="/static/images/digitization.jpg" class="card-img" alt="...">
+    <div class="card-img-overlay">
+      <h5 class="card-title">Admin</h5>
+      <p class="card-text">Welcome to your dispatch view.</p>
+    </div>
+  </div>
 
 <!-- Buttons of New Res, Edit Res, delete Res, New User and Edit User, Edit Admin -->
 
 <div class="d-grid gap-2 d-md-block my-3">
-    <!-- <a class="btn btn-outline-primary" href="/res">NEW RESERVATION</a> -->
-    <a class="btn btn-outline-info" href="/admin/edit_admin/{{admin.id}}">EDIT PROFILE</a>
-
+    <a class="btn btn-outline-primary" href="/admin/select_user"><b>NEW RESERVATION</b></a>
 </div>
 
 <table class="table table-dark table-bordered table-hover" id="reservations">
@@ -17,7 +21,7 @@
     <thead>
         <tr>
             <th scope="col">Res. #</th>
-            <th scope="col">Customer</th>
+            <th scope="col">Customer Name</th>
             <th scope="col">Passenger Name</th>
             <th scope="col">Pick-Up Date</th>
             <th scope="col">Pick-Up Time</th>
@@ -28,10 +32,10 @@
     </thead>
 
     {% for res in reservations %}
-        {% for user in users%}
+       
         <tr>
             <td>{{res.id}}</td>
-            <td>{{user.username}}</td>
+            <td>{{res.user.first_name}} {{res.user.last_name}}</td>
             <td>{{res.passenger_name}}</td>
             <td>{{res.PU_date.strftime('%m/%d/%Y')}}</td>
             <td>{{res.PU_time.strftime('%I:%M %p')}}</td>
@@ -39,16 +43,13 @@
             <td>{{res.DO_address}}</td>
             <td> 
                 <a class="btn btn-outline-warning btn-sm" href="/admin/admin_edit_res/{{res.id}}">Edit</a>
-                <!-- Button trigger modal -->
-                <!-- <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                View
-                </button> -->
                 <a type="button" class="btn btn-outline-info btn-sm" href="/res/view/{{res.id}}">View</a>
                 <a class="btn btn-outline-info btn-sm" data-bs-toggle="modal-dialog" href="/res/email_res_form/{{res.id}}">Email</a>
+                
             </td>
             
         </tr>
-        {% endfor %}
+       
     {% endfor %}
 
 </table>

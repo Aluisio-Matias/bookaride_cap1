@@ -93,8 +93,11 @@
       <div class="px-4">
           <div class="col">
             <div class="p-3">
-              <img src="" alt="Company Logo">
-              <h6 class="fw-bold text-start">Company info</h6>
+              <img src="/static/images/logo.png" alt="Company Logo">
+              <h6 class="fw-bold text-start">Company Name</h6>
+              <p>Address: 123 Main Street, YourCity, State, 12345</p>
+              <p>Phone: 012-345-6789</p>
+              <p>Email: example@email.com</p>
             </div>
           </div>
             <div class="text-end p-3">

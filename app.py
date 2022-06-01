@@ -1,10 +1,12 @@
+from crypt import methods
 from datetime import date
+from email.policy import default
 from time import strftime
-from flask import Flask, jsonify, render_template, redirect, flash, session, g, request, url_for
+from flask import Flask, jsonify, render_template, redirect, flash, session, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import Unauthorized
-from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, AdminForm, AdminLoginForm
-from models import db, connect_db, User, Reservation, Admin
+from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, AdminRegisterForm
+from models import db, connect_db, User, Reservation
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import exc
 from secret import em_user, em_pass
@@ -16,7 +18,7 @@ import os
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///project_test'))
+    os.environ.get('DATABASE_URL', 'postgresql:///capstone_project_test'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -41,63 +43,26 @@ connect_db(app)
 @app.route('/')
 def homepage():
     '''Display User's homepage'''
-
     return render_template('home.html')
 
-@app.route('/admin/admin_home')
-def admin_homepage():
-    '''Display Admin's homepage'''
-    return render_template('/admin/admin_home.html')
+@app.route('/about')
+def about():
+    '''Display about us page'''
+    return render_template('about.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
     '''Page not found (404 error)'''
-
     return render_template('404.html'), 404
 
 @app.errorhandler(401)
 def not_allowed(e):
     '''Show 401 page for not authorized users.'''
-
     return render_template('401.html'), 401
 
 
 ############################################################################
 # User routes for register / login / logout
-
-@app.before_request
-def add_user_to_g():
-    '''If user is logged in, add current user to Flask Global.'''
-    if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
-    else:
-        g.user = None
-
-def do_login(user):
-    '''Login the user.'''
-    session[CURR_USER_KEY] = user.id
-
-def do_logout():
-    '''Logout current user.'''
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
-
-######## Admin routes for register / login / logout ############
-def add_admin_to_g():
-    '''If admin is logged in, and current admin to Flask Global.'''
-    if CURR_ADMIN_KEY in session:
-        g.user = Admin.query.get(session[CURR_ADMIN_KEY])
-    else:
-        g.user = None
-
-def do_admin_login(admin):
-    '''Login the admin user'''
-    session[CURR_ADMIN_KEY] = admin.id
-
-def do_admin_logout():
-    '''Logout current Admin user.'''
-    if CURR_ADMIN_KEY in session:
-        del session[CURR_ADMIN_KEY]
 #################################################################
 
 
@@ -128,9 +93,8 @@ def register_user():
             flash('Username, E-mail, or Phone number is taken! Please check the form and try again.', 'danger')
             return render_template('users/register.html', form=form)
         
-        do_login(user)
+        session[CURR_USER_KEY] = user.id
         flash('Welcome! Your account has been created successfully!', 'success')
-
         return redirect(f'/users/{user.id}')
     else:
         return render_template('users/register.html', form=form)
@@ -142,25 +106,29 @@ def login():
 
     form = LoginForm()
 
-    # if CURR_USER_KEY in session:
-    #     return redirect(f'/users/{g.user.id}')
-
     if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
-                                form.password.data)
-        if user:
-            do_login(user)
+        user = User.authenticate(form.username.data, form.password.data)
+        
+        if user and user.is_admin == False:
+            session[CURR_USER_KEY] = user.id
             flash(f'Hello, Welcome back {user.first_name}!', 'success')
             return redirect(f'/users/{user.id}')
-        flash("Invalid credentials, please try again!", 'danger')
-        
+
+        elif user and user.is_admin == True:
+            session[CURR_ADMIN_KEY] = user.id
+            flash(f'Hello, Welcome back {user.first_name}!', 'success')
+            return redirect(f'/admin/admin_home')
+
+    
+        flash("Invalid credentials, please check your username and password and try again!", 'danger')
+
     return render_template('users/login.html', form=form)
 
 
 @app.route('/logout')
 def logout():
     '''Handle logout of a user.'''
-    session.pop(CURR_USER_KEY)
+    session.clear()
 
     flash('You have been successfully logged out!', 'success')
 
@@ -199,56 +167,37 @@ def check_email(email):
     return jsonify({"exists": valid})
 
 ################################################################################
-############# API to check if admin username already exists in the admin database ############
-@app.route('/check_admin/<admin_username>', methods=['GET'])
-def check_admin(admin_username):
-    
-    user = Admin.query.filter_by(admin_username=admin_username).first()
-    is_valid = True
-    if user:
-        is_valid = False
-    return jsonify({"exists": is_valid})
-
-############# API to check if email already exists in the users database ############
-@app.route('/verify_admin/<admin_email>', methods=['GET'])
-def admin_email(admin_email):
-    
-    ck_email = Admin.query.filter_by(admin_email=admin_email).first()
-    valid = True
-    if ck_email:
-        valid = False
-    return jsonify({"exists": valid})
-
-################################################################################
 
 
 #############################################################################
 # User route for user's page / edit profile / reservations
 
 @app.route('/users/<int:id>')
-def show_user(id):
+def user_dashboard(id):
     '''Page for logged in users.'''
+    user = User.query.get_or_404(id)
 
-    if CURR_USER_KEY not in session:
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user.id:
         raise Unauthorized()
 
     user = User.query.get_or_404(id)
 
     reservations = Reservation.query.all()
     
-    return render_template('users/show_user.html', user=user, reservations=reservations)
+    return render_template('users/user_dashboard.html', user=user, reservations=reservations)
 
 
 
-@app.route('/users/edit_profile/<int:id>', methods=['GET', 'POST'])
-def edit_profile(id):
+@app.route('/users/edit_profile/<int:user_id>', methods=['GET', 'POST'])
+def edit_profile(user_id):
     '''Update a profile from a current user.'''
 
-    if CURR_USER_KEY not in session:
+    user = User.query.get(session[CURR_USER_KEY])
+
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user.id:
         raise Unauthorized()
 
-    user = g.user
-    id = User.query.get_or_404(id)
+    user_id = user.id
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
@@ -264,18 +213,20 @@ def edit_profile(id):
 
         flash('Wrong password, please try again!', 'danger')
 
-    return render_template('users/edit_profile.html', form=form, user_id=user.id, id=id)
+    return render_template('users/edit_profile.html', user=user, form=form, user_id=user_id)
 
 
 #############################################################################
 # Reservations routes 
 
-@app.route('/res', methods=['POST', 'GET'])
+@app.route('/res/res_form', methods=['POST', 'GET'])
 def res_form():
     '''Show form to submit a reservation.'''
 
     if CURR_USER_KEY not in session:
         raise Unauthorized()
+
+    user = User.query.get(session[CURR_USER_KEY])
 
     form = ResForm()
 
@@ -322,13 +273,13 @@ def res_form():
             trip_notes = trip_notes,
         )
 
-        g.user.reservations.append(new_res)
+        user.reservations.append(new_res)
         db.session.commit()
         flash('Your reservation has been successfully submitted!', 'success')
 
-        return redirect(f'/users/{g.user.id}')
+        return redirect(f'/users/{user.id}')
     else:
-        return render_template('res/res_form.html', form=form)
+        return render_template('res/res_form.html', form=form, user=user)
 
 
 ################ routes to edit reservations ###########################
@@ -347,12 +298,12 @@ def show_edit_res(res_id):
 @app.route('/res/edit_res/<int:res_id>', methods=['POST'])
 def edit_res(res_id):
     '''Edit a reservation '''
-
-    if CURR_USER_KEY not in session:
+    user = User.query.get(session[CURR_USER_KEY])
+    res_id = Reservation.query.get_or_404(res_id)
+    
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user.id:
         raise Unauthorized()
 
-    user = g.user
-    res_id = Reservation.query.get_or_404(res_id)
     form = ResForm(obj=res_id)
 
     if form.validate_on_submit():
@@ -387,14 +338,11 @@ def edit_res(res_id):
 def view_res(res_id):
     '''display reservation details in HTML'''
 
-    if CURR_USER_KEY not in session:
+    if (CURR_USER_KEY not in session) and (CURR_ADMIN_KEY not in session):
         raise Unauthorized()
 
-    user = g.user
-    res_id = Reservation.query.get_or_404(res_id)
-
-
-    return render_template('/res/view_res.html', res_id=res_id, user=user)
+    res = Reservation.query.get_or_404(res_id)
+    return render_template('/res/view_res.html', res=res)
 
 
 ################ email reservation routes ###################
@@ -403,10 +351,10 @@ def view_res(res_id):
 def email_res_form(res_id):
     '''Display a form so a user can email the booking confirmation'''
 
-    if CURR_USER_KEY not in session:
+    if CURR_USER_KEY not in session and CURR_ADMIN_KEY not in session:
         raise Unauthorized()
 
-    user = g.user
+    user = User.query.get(session[CURR_USER_KEY or CURR_ADMIN_KEY])
     res_id = Reservation.query.get_or_404(res_id)
     form = EmailRes()
     return render_template('/res/email_res.html', user=user, res_id=res_id, form=form)
@@ -416,18 +364,18 @@ def email_res_form(res_id):
 def email_res(res_id):
     '''Display a form so a user can email the booking confirmation'''
 
-    if CURR_USER_KEY not in session:
+    if CURR_USER_KEY not in session and CURR_ADMIN_KEY not in session:
         raise Unauthorized()
 
-    user = g.user
-    res_id = Reservation.query.get_or_404(res_id)
+    user = User.query.get(session[CURR_USER_KEY])
+    res = Reservation.query.get_or_404(res_id)
 
     form = EmailRes()
 
     if form.validate_on_submit:
         EMAIL_TO = form.email_res.data,
         msg = EmailMessage()
-        msg['Subject'] = f'Booking confirmation {res_id.id}'
+        msg['Subject'] = f'Booking confirmation {res.id}'
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = EMAIL_TO
         msg.set_content('This is a plain text email')
@@ -442,17 +390,17 @@ def email_res(res_id):
         email_string = email_string.replace('{first_name}', user.first_name)
         email_string = email_string.replace('{last_name}', user.last_name)
         email_string = email_string.replace('{phone}', user.phone)
-        email_string = email_string.replace('{conf}', str(res_id.id))
-        email_string = email_string.replace('{PU_date}', res_id.PU_date.strftime('%A, %B %d, %Y'))
-        email_string = email_string.replace('{PU_time}', res_id.PU_time.strftime('%I:%M %p'))
-        email_string = email_string.replace('{passenger_name}', res_id.passenger_name)
-        email_string = email_string.replace('{passenger_phone}', res_id.passenger_phone)
-        email_string = email_string.replace('{vehicle_type}', res_id.vehicle_type)
-        email_string = email_string.replace('{PU_date}', res_id.PU_date.strftime('%m/%d/%Y'))
-        email_string = email_string.replace('{PU_time}', res_id.PU_time.strftime('%I:%M %p'))
-        email_string = email_string.replace('{PU_address}', res_id.PU_address)
-        email_string = email_string.replace('{DO_address}', res_id.DO_address)
-        email_string = email_string.replace('{trip_notes}', res_id.trip_notes)
+        email_string = email_string.replace('{conf}', str(res.id))
+        email_string = email_string.replace('{PU_date}', res.PU_date.strftime('%A, %B %d, %Y'))
+        email_string = email_string.replace('{PU_time}', res.PU_time.strftime('%I:%M %p'))
+        email_string = email_string.replace('{passenger_name}', res.passenger_name)
+        email_string = email_string.replace('{passenger_phone}', res.passenger_phone)
+        email_string = email_string.replace('{vehicle_type}', res.vehicle_type)
+        email_string = email_string.replace('{PU_date}', res.PU_date.strftime('%m/%d/%Y'))
+        email_string = email_string.replace('{PU_time}', res.PU_time.strftime('%I:%M %p'))
+        email_string = email_string.replace('{PU_address}', res.PU_address)
+        email_string = email_string.replace('{DO_address}', res.DO_address)
+        email_string = email_string.replace('{trip_notes}', res.trip_notes)
 
         # print(email_string)
 
@@ -465,8 +413,9 @@ def email_res(res_id):
         return redirect(f'/users/{user.id}')
 
 
-
+#################################################################################
 ############## System Administrator routes ##################
+#################################################################################
 
 @app.route('/admin/register_admin', methods=['GET', 'POST'])
 def register_admin():
@@ -475,100 +424,47 @@ def register_admin():
     if CURR_ADMIN_KEY in session:
         del session[CURR_ADMIN_KEY]
 
-    form = AdminForm()
+    form = AdminRegisterForm()
 
     if form.validate_on_submit():
         try:
-            admin = Admin.register_admin(
-                admin_username=form.admin_username.data,
-                password=form.password.data,
-                admin_email=form.admin_email.data,
+            user = User.registerAdmin(
+                username = form.username.data,
+                password = form.password.data,
+                email = form.email.data,
+                first_name = form.first_name.data,
+                last_name = form.last_name.data,
+                phone = form.phone.data,
+                is_admin = form.is_admin.data
             )
             db.session.commit()
+            # admin_role = db.session.query(Role).filter_by(name='Admin').first()
+            # admin.roles.append(admin_role)
+            # db.session.commit()
 
         except exc.SQLAlchemyError:
             flash('Username or E-mail are taken! Please check the form and try again.', 'danger')
             return render_template('/admin/register_admin.html', form=form)
-
-        do_admin_login(admin)
+        
+        session[CURR_ADMIN_KEY] = user.id
         flash('Welcome! Your admin account has been created successfully!', 'success')
 
-        return redirect(f'/admin/admin_home/{admin.id}')
+        return redirect(f'/admin/admin_home')
     else:
         return render_template('admin/register_admin.html', form=form)
 
 
-@app.route('/admin/admin_login', methods=['GET', 'POST'])
-def admin_login():
-    '''Display the page to login an admin user'''
-    
-    form = AdminLoginForm()
-
-    if form.validate_on_submit():
-        admin = Admin.authenticate_admin(form.admin_username.data,
-                                form.password.data)
-        if admin:
-            do_login(admin)
-            flash(f'Hello, Welcome back {admin.admin_username}!', 'success')
-            return redirect(f'/admin/admin_home/{admin.id}')
-        flash("Invalid credentials, please try again!", 'danger')
-        
-    return render_template('admin/admin_login.html', form=form)
-
-
-@app.route('/admin/admin_logout')
-def admin_logout():
-    '''Handle logout of a user.'''
-    session.pop(CURR_ADMIN_KEY)
-
-    do_admin_logout()
-
-    flash('You have been successfully logged out!', 'success')
-
-    return redirect('/')
-
-
-@app.route('/admin/admin_home/<int:admin_id>')
-def show_admin(admin_id):
+@app.route('/admin/admin_home')
+def admin_home():
     '''Dispatch view page for admin users.'''
 
     if CURR_ADMIN_KEY not in session:
         raise Unauthorized()
 
-    admin = Admin.query.get_or_404(admin_id)
     reservations = Reservation.query.all()
     users = User.query.all()
     
-    return render_template('admin/admin_home.html', admin=admin, reservations=reservations, users=users)
-
-
-@app.route('/admin/edit_admin/<int:admin_id>', methods=['GET', 'POST'])
-def edit_admin(admin_id):
-    '''Update admin profile'''
-
-    if CURR_ADMIN_KEY not in session:
-        raise Unauthorized()
-
-    admin = g.user
-    admin_id = Admin.query.get_or_404(admin_id)
-    form = AdminForm(obj=admin)
-
-    if form.validate_on_submit():
-        if Admin.authenticate_admin(admin.admin_username, form.password.data):
-            admin.admin_username = form.admin_username.data
-            admin.admin_email = form.admin_email.data
-            admin.company_name = form.company_name.data
-            admin.company_phone = form.company_phone.data
-            admin.company_email = form.company_email.data
-            admin.company_website = form.company_website.data
-            admin.logo_url = form.logo_url.data
-
-            db.session.commit()
-            return redirect(f'/admin/admin_home/{admin.id}')
-
-        flash('Wrong password, please try again!', 'danger')
-
-    return render_template('/admin/edit_admin.html', form=form, admin_id=admin_id, admin=admin)
+    return render_template('admin/admin_home.html', reservations=reservations, users=users)
 
 
 @app.route('/admin/admin_edit_res/<int:res_id>')
@@ -590,7 +486,6 @@ def admin_edit_res(res_id):
     if CURR_ADMIN_KEY not in session:
         raise Unauthorized()
 
-    user = g.user
     res_id = Reservation.query.get_or_404(res_id)
     form = ResForm(obj=res_id)
 
@@ -617,7 +512,97 @@ def admin_edit_res(res_id):
 
         db.session.commit()
         flash('Reservation has been updated.', 'success')
-        return redirect(f'/admin/admin_home/{user.id}')
+        return redirect(f'/admin/admin_home')
+
+
+@app.route('/admin/select_user')
+def select_user():
+    '''Select a user to create a reservation'''
+
+    if CURR_ADMIN_KEY not in session:
+        raise Unauthorized()
+
+    users = User.query.all()
+    return render_template('admin/select_user.html', users=users)
 
 
 
+@app.route('/admin/new_res/<int:user_id>')
+def new_res_form(user_id):
+    '''Display the form for an admin to submit a new reservation.'''
+
+    if CURR_ADMIN_KEY not in session:
+        raise Unauthorized()
+
+    user = User.query.get(user_id)
+    user_id = user.id
+    form = ResForm()
+
+    return render_template('admin/new_res.html', user_id=user_id, form=form, user=user)
+
+    
+@app.route('/admin/new_res/<int:user_id>', methods=['POST'])
+def new_res(user_id):
+    '''Allow admin to create a new reservation to an existing user.'''
+
+    if CURR_ADMIN_KEY not in session:
+        raise Unauthorized()
+    
+    user_id = User.query.get(user_id)
+    user = user_id
+    form = ResForm()
+
+    if form.validate_on_submit():
+        passenger_name = form.passenger_name.data,
+        passenger_phone = form.passenger_phone.data,
+        passenger_email = form.passenger_email.data,
+        vehicle_type = form.vehicle_type.data,
+        PU_date = form.PU_date.data,
+        PU_time = form.PU_time.data,
+        PU_address = form.PU_address.data,
+        PU_street = form.PU_street.data,
+        PU_city = form.PU_city.data,
+        PU_state = form.PU_state.data,
+        PU_zip = form.PU_zip.data,
+        PU_country = form.PU_country.data,
+        DO_address = form.DO_address.data,
+        DO_street = form.DO_street.data,
+        DO_city = form.DO_city.data,
+        DO_state = form.DO_state.data,
+        DO_zip = form.DO_zip.data,
+        DO_country = form.DO_country.data,
+        trip_notes = form.trip_notes.data,
+
+        new_res = Reservation(
+            passenger_name = passenger_name,
+            passenger_phone = passenger_phone,
+            passenger_email = passenger_email,
+            vehicle_type = vehicle_type,
+            PU_date = PU_date,
+            PU_time = PU_time,
+            PU_address = PU_address,
+            PU_street = PU_street,
+            PU_city = PU_city,
+            PU_state = PU_state,
+            PU_zip = PU_zip,
+            PU_country = PU_country,
+            DO_address = DO_address,
+            DO_street = DO_street,
+            DO_city = DO_city,
+            DO_state = DO_state,
+            DO_zip = DO_zip,
+            DO_country = DO_country,
+            trip_notes = trip_notes,
+        )
+
+        # import pdb;
+        # pdb.set_trace()
+
+        user.reservations.append(new_res)
+
+        db.session.commit()
+        flash('Reservation has been successfully submitted!', 'success')
+
+        return redirect(url_for('admin_home'))
+    # else:
+    #     return render_template('admin/new_res.html', form=form, user=user, users=users)

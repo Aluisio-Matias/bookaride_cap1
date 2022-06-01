@@ -82,6 +82,7 @@ window.onload = function () {
             'poi',
             'airport',
             'address',
+            'adminArea',
         ]
 
     });

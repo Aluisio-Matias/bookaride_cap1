@@ -2,13 +2,70 @@
 
 {% block content %}
 
-<h1 class="display-1 text-center my-3">Welcome</h1>
 
-<p>To register as an Administrator <a href="admin/register_admin">Click Here</a></p>
+<div class="content-wrapper">
+    <img src="/static/images/home.jpg" 
+    class="img-fluid" alt="Home page image">
+    <div class="text-wrapper">
+        <h1 class="display-5 text-start my-1">WELCOME</h1>
+        <h5 id="welcome">TO THE BEST LUXURY TRANSPORTATION SERVICES IN THE BAY AREA</h5>
+    </div>
+</div>
+
+ <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  <b>Contact Us</b>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Contact Us</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5>You may call us anytime at: 012-345-6789</h5>
+        <h5>Email us at: example@email.com</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
+<div class="card mb-1 bg-black position-absolute bottom-0 start-0 mx-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="/static/images/img3.jpeg" class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title text-white">The best luxury transportation</h5>
+          <p class="card-text text-white">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique aperiam, libero beatae aliquid veniam odit molestiae ne</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="card mb-1 bg-black position-absolute bottom-0 end-0 mx-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="/static/images/img2.jpeg" class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title text-white">Professional service you can trust</h5>
+          <p class="card-text text-white">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique aperiam, libero beatae aliquid veniam odit molestiae ne</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
+ 
 
 {% endblock %}
 
