@@ -5,6 +5,7 @@ from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, Admi
 from models import db, connect_db, User, Reservation
 from sqlalchemy import exc
 import os
+import re
 import smtplib
 from email.message import EmailMessage
 from twilio.rest import Client
@@ -18,6 +19,10 @@ except:
     twilio_number = os.environ.get("TWILIO_NUMBER")
 
 app = Flask(__name__)
+
+uri = os.getenv("DATABASE_URL")
+if uri and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgresql:///book_a_ride'))
@@ -190,7 +195,6 @@ def user_dashboard(id):
     reservations = Reservation.query.all()
     
     return render_template('users/user_dashboard.html', user=user, reservations=reservations)
-
 
 
 @app.route('/users/edit_profile/<int:user_id>', methods=['GET', 'POST'])

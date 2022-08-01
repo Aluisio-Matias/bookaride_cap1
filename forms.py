@@ -1,8 +1,6 @@
-from random import choices
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, TelField, TimeField, TextAreaField, DateField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length, InputRequired
-from models import User
 
 class RegisterForm(FlaskForm):
     '''Form for registering new users.'''
