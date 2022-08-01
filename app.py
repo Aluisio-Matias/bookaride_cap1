@@ -42,8 +42,6 @@ TWILIO_NUMBER = twilio_number
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 connect_db(app)
-# db.drop_all()
-# db.create_all()
 
 ###########################################################################
 # Homepage and error handling
