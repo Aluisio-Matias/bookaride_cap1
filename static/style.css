@@ -9,13 +9,13 @@ body{
     color: #f1f1f1;
 }
 
-.content-warpper{
+.content-wrapper{
     width: 100%;
     margin: 0;
     position: absolute;
 }
 
-.content-warpper img{
+.content-wrapper img{
     width: 100%;
     margin: 0;
 }
