@@ -4,11 +4,18 @@ from werkzeug.exceptions import Unauthorized
 from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, AdminRegisterForm
 from models import db, connect_db, User, Reservation
 from sqlalchemy import exc
-from secret import em_user, em_pass, account_sid, auth_token, twilio_number
+import os
 import smtplib
 from email.message import EmailMessage
 from twilio.rest import Client
-import os
+try:
+    from secret import em_user, em_pass, account_sid, auth_token, twilio_number
+except:
+    em_user = os.environ.get("EM_USER")
+    em_pass = os.environ.get("EM_PASS")
+    account_sid = os.environ.get("ACCOUNT_SID")
+    auth_token = os.environ.get("AUTH_TOKEN")
+    twilio_number = os.environ.get("TWILIO_NUMBER")
 
 app = Flask(__name__)
 
