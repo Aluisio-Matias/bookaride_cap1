@@ -1,4 +1,4 @@
-{% extends 'admin_base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
@@ -29,13 +29,8 @@
         {{ form.phone.label }} {{ form.phone(class_="form-control")}}
         <span id="phoneCheck"></span>
     </div>
-    <div class="col-md-6">
-        {{ form.is_admin.label }} {{ form.is_admin(class_="form-control")}}
-        <span id="phoneCheck"></span>
-    </div>
 
-
-    <button class="btn btn-outline-primary my-4" type="submit">Register</button>
+    <p><button class="btn btn-outline-primary my-2" type="submit">Register</button></p>
 
 </form>
 

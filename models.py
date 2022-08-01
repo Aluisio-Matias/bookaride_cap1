@@ -3,7 +3,6 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy.schema import Sequence
 from datetime import datetime, timezone
 from flask_login import UserMixin
-# from flask_security import UserMixin, RoleMixin
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -61,15 +60,8 @@ class User(db.Model, UserMixin):
 
     member_since = db.Column(
         db.DateTime,
-        # nullable=False,
         default=datetime.now(timezone.utc),
     )
-
-    # roles = db.relationship(
-    #     'Role', 
-    #     secondary='user_roles', 
-    #     backref=db.backref('users', lazy='dynamic')
-    #     )
 
     @classmethod
     def register(cls, username, password, email, first_name, last_name, phone):
@@ -121,8 +113,6 @@ class User(db.Model, UserMixin):
 
         db.session.add(admin)
         return admin
-
-
 
 
 class Reservation(db.Model):

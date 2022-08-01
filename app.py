@@ -1,30 +1,25 @@
-from crypt import methods
-from datetime import date
-from email.policy import default
-from time import strftime
 from flask import Flask, jsonify, render_template, redirect, flash, session, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import Unauthorized
 from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, AdminRegisterForm
 from models import db, connect_db, User, Reservation
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy import exc
-from secret import em_user, em_pass
+from secret import em_user, em_pass, account_sid, auth_token, twilio_number
 import smtplib
 from email.message import EmailMessage
+from twilio.rest import Client
 import os
-
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///capstone_project_test'))
+    os.environ.get('DATABASE_URL', 'postgresql:///book_a_ride'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
-app.debug = True
+app.debug = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
@@ -32,6 +27,12 @@ CURR_USER_KEY = "curr_user"
 CURR_ADMIN_KEY = "curr_admin"
 EMAIL_ADDRESS = em_user
 EMAIL_PASSWORD = em_pass
+ACCOUNT_SID = account_sid
+AUTH_TOKEN = auth_token
+TWILIO_NUMBER = twilio_number
+
+# for working with the twilio API
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 connect_db(app)
 # db.drop_all()
@@ -87,7 +88,6 @@ def register_user():
              )
             db.session.commit()
 
-        # except IntegrityError:
         except exc.SQLAlchemyError:
             
             flash('Username, E-mail, or Phone number is taken! Please check the form and try again.', 'danger')
@@ -109,12 +109,12 @@ def login():
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
         
-        if user and user.is_admin == False:
+        if user and not user.is_admin:
             session[CURR_USER_KEY] = user.id
             flash(f'Hello, Welcome back {user.first_name}!', 'success')
             return redirect(f'/users/{user.id}')
 
-        elif user and user.is_admin == True:
+        elif user and user.is_admin:
             session[CURR_ADMIN_KEY] = user.id
             flash(f'Hello, Welcome back {user.first_name}!', 'success')
             return redirect(f'/admin/admin_home')
@@ -194,7 +194,7 @@ def edit_profile(user_id):
 
     user = User.query.get(session[CURR_USER_KEY])
 
-    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user.id:
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user_id:
         raise Unauthorized()
 
     user_id = user.id
@@ -277,6 +277,14 @@ def res_form():
         db.session.commit()
         flash('Your reservation has been successfully submitted!', 'success')
 
+        # SMS message using the Twilio API
+        SMS_MESSAGE = client.messages.create(
+            body=f'Your reservation has been successfully booked! {PU_date} - {PU_time}',
+            from_=TWILIO_NUMBER,
+            to=f'+1{passenger_phone}'
+            )
+        print(SMS_MESSAGE.body)
+
         return redirect(f'/users/{user.id}')
     else:
         return render_template('res/res_form.html', form=form, user=user)
@@ -287,10 +295,11 @@ def res_form():
 def show_edit_res(res_id):
     '''Display the form for editing the reservation'''
 
-    if CURR_USER_KEY not in session:
+    res_id = Reservation.query.get_or_404(res_id)
+
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != res_id.user_id:
         raise Unauthorized()
 
-    res_id = Reservation.query.get_or_404(res_id)
     form = ResForm(obj=res_id)
     return render_template('/res/edit_res.html', res_id=res_id, form=form)
 
@@ -301,7 +310,7 @@ def edit_res(res_id):
     user = User.query.get(session[CURR_USER_KEY])
     res_id = Reservation.query.get_or_404(res_id)
     
-    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != user.id:
+    if CURR_USER_KEY not in session or session[CURR_USER_KEY] != res_id.user_id:
         raise Unauthorized()
 
     form = ResForm(obj=res_id)
@@ -595,14 +604,9 @@ def new_res(user_id):
             trip_notes = trip_notes,
         )
 
-        # import pdb;
-        # pdb.set_trace()
-
         user.reservations.append(new_res)
 
         db.session.commit()
         flash('Reservation has been successfully submitted!', 'success')
 
         return redirect(url_for('admin_home'))
-    # else:
-    #     return render_template('admin/new_res.html', form=form, user=user, users=users)

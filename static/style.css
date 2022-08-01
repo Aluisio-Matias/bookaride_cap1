@@ -1,17 +1,18 @@
 body{
     width: 100%;
     height: auto;
-    background-color: #f1f1f1;
+    background-color: #d3d3d3;
     font-family: 'Tinos', serif;
 }
 
-#welcome{
+#white-font{
     color: #f1f1f1;
 }
 
 .content-warpper{
     width: 100%;
     margin: 0;
+    position: absolute;
 }
 
 .content-warpper img{
@@ -30,3 +31,8 @@ body{
     color: #f1f1f1;
 }
 
+@media only screen and (max-width: 600px) {
+    #cards {
+        margin-bottom: 30%;
+    }
+}
