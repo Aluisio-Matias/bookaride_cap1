@@ -5,7 +5,6 @@ from forms import EmailRes, RegisterForm, LoginForm, ResForm, UserEditForm, Admi
 from models import db, connect_db, User, Reservation
 from sqlalchemy import exc
 import os
-# import re
 import smtplib
 from email.message import EmailMessage
 from twilio.rest import Client
@@ -20,19 +19,12 @@ except:
 
 app = Flask(__name__)
 
-# uri = os.getenv("DATABASE_URL")
-# if uri and uri.startswith("postgres://"):
-#     uri = uri.replace("postgres://", "postgresql://", 1)
-
 try:
     uri = os.getenv('DATABASE_URL')
     uri = uri.replace("postgres://", "postgresql://")
     app.config['SQLALCHEMY_DATABASE_URI'] = uri
 except:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///book_a_ride'
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = (
-#     os.environ.get(uri, 'postgresql:///book_a_ride'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
