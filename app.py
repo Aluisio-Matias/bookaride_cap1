@@ -285,9 +285,9 @@ def res_form():
         db.session.commit()
         flash('Your reservation has been successfully submitted!', 'success')
 
-        # SMS message using the Twilio API
+        # SMS message using the Twilio API - send a text confirming the booking.
         SMS_MESSAGE = client.messages.create(
-            body=f'Your reservation has been successfully booked! {PU_date} - {PU_time}',
+            body="Thank you! Your reservation has been successfully booked!",
             from_=TWILIO_NUMBER,
             to=f'+1{passenger_phone}'
             )

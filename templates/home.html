@@ -3,20 +3,18 @@
 {% block content %}
 
 <div class="content-wrapper">
-    <img src="/static/images/home.jpg" 
-    class="img-fluid" alt="Home page image">
+    <img src="/static/images/home.jpg" alt="Home page image">
     <div class="text-wrapper">
-        <h1 class="display-5 text-start my-2 mx-3">WELCOME</h1>
-        <h5 id="white-font" class="mx-3">TO THE BEST LUXURY TRANSPORTATION SERVICES IN THE BAY AREA</h5>
-        <p id="white-font" class="mx-3">Click <a href="/register">here</a> to register and book your service online.</p>
-        <p id="white-font" class="mx-3">Already registered? Click <a href="/login">here</a> to login.</p>
+        <h1 class="display-5 text-start my-2">WELCOME</h1>
+        <h5 class="my-1">TO THE BEST LUXURY TRANSPORTATION SERVICES IN THE BAY AREA</h5>
+        <p class="my-1">Click <a href="/register">here</a> to register and book your service online.</p>
+        <p class="my-1">Already registered? Click <a href="/login">here</a> to login.</p>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-primary my-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+          <b>Contact Us</b>
+        </button>
     </div>
 </div>
-
- <!-- Button trigger modal -->
-<button type="button" class="btn btn-outline-primary my-2 mx-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  <b>Contact Us</b>
-</button>
 
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -37,7 +35,35 @@
   </div>
 </div>
 
-<div class="position-absolute d-block bottom-0">
+<div class="card">
+  <img src="/static/images/img3.jpeg" alt="Picture of Golden Gate Bridge">
+  <div class="card-container">
+    <h4><b>Providing executive transportation services for the entire San Francisco Bay Area</b></h4>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam repellat tempora incidunt 
+      eius illo quam minus deserunt aspernatur. Ea quasi id numquam vero nisi dolores, aut beatae. 
+      Voluptas, quia tenetur! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Necessitatibus 
+      nostrum unde numquam soluta facilis, sequi tempore delectus sit quaerat veritatis reiciendis at 
+      velit totam inventore officia ipsa, veniam ullam exercitationem?</p>
+  </div>
+</div>
+
+<div class="card">
+  <img src="/static/images/img2.jpeg" alt="Picture of chauffer driving">
+  <div class="card-container">
+    <h4><b>Professional high quality service you can trust</b></h4>
+    <p>Aperiam repellat tempora incidunt eius illo quam minus deserunt aspernatur. Ea quasi id numquam 
+      vero nisi dolores, aut beatae. Voluptas, quia tenetur! Lorem ipsum dolor sit amet consectetur, 
+      adipisicing elit. Necessitatibus nostrum unde numquam soluta facilis, sequi tempore delectus sit 
+      quaerat veritatis reiciendis at velit totam inventore officia ipsa, veniam ullam exercitationem? 
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil recusandae rerum vitae est officiis 
+      facere aut suscipit! Eius ducimus assumenda dolorum iusto repudiandae recusandae ea molestias nulla 
+      commodi quibusdam. Mollitia?</p>
+  </div>
+</div>
+
+
+
+<!-- <div class="position-absolute d-block bottom-0">
   <div class="row mx-auto">
     <div class="col">
       <div class="card mb-3 bg-black">
@@ -70,7 +96,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 {% endblock %}
