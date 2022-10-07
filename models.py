@@ -127,12 +127,6 @@ class Reservation(db.Model):
         primary_key=True,
     )
 
-    # driver_id = db.Column(
-    #     db.Integer,
-    #     db.ForeignKey('drivers.id', ondelete='cascade'),
-    #     primary_key=True,
-    # )
-
     passenger_name = db.Column(
         db.String,
         nullable=False,
@@ -229,37 +223,6 @@ class Reservation(db.Model):
 
     user = db.relationship(User,  backref=db.backref("reservations", cascade="all, delete-orphan"))
 
-
-# class Driver(db.Model):
-#     '''Driver '''
-
-#     __tablename__ = 'drivers'
-
-
-#     id = db.Column(
-#         db.Integer,
-#         primary_key=True,
-#     )
-
-#     driver_first_name = db.Column(
-#         db.Text,
-#     )
-
-#     driver_last_name = db.Column(
-#         db.Text,
-#     )
-
-#     driver_phone = db.Column(
-#         db.Integer,
-#     )
-
-#     driver_email = db.Column(
-#         db.Text,
-#     )
-
-#     driver_details = db.Column(
-#         db.Text,
-#     )
 
 
 def connect_db(app):

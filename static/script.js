@@ -108,39 +108,3 @@ window.onload = function () {
     })
 
 };
-
-
-// window.onload = function () {
-//     let ps = searchPlace({
-//         key: 'G5F1eAqrAxpAwSEY5OtKnh07BpS99ryw',
-//         container: document.querySelector('#DO_address'),
-//         useDeviceLocation: true,
-//         collection: [
-//             'poi',
-//             'airport',
-//             'address',
-//             'adminArea',
-//         ]
-//     });
-
-//     ps.on('change', (e) => {
-//         document.querySelector('#DO_street').value = e.result.name || '';
-//         document.querySelector('#DO_city').value = e.result.city || '';
-//         document.querySelector('#DO_state').value = e.result.stateCode || '';
-//         document.querySelector('#DO_zip').value = e.result.postalCode || '';
-//         document.querySelector('#DO_country').value = e.result.countryCode || '';
-//     });
-
-//     ps.on('clear', () => {
-//         document.querySelector('#DO_street').value = '';
-//         document.querySelector('#DO_city').value = '';
-//         document.querySelector('#DO_state').value = '';
-//         document.querySelector('#DO_zip').value = '';
-//         document.querySelector('#DO_country').value = '';
-//     });
-
-//     ps.on('error', (e) => {
-//         console.log(e);
-//     });
-
-// };
